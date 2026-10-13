@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stéphan Mondain — Photographe</title>
+<meta name="description" content="Portraits en noir et blanc, où clair-obscur et sensualité se mêlent pour révéler l'essentiel. Stéphan Mondain, photographe." />
+<style>
+  :root { font-family: Georgia, serif; background: #0a0a0a; color: #eaeaea; }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  header { position: sticky; top: 0; background: rgba(10,10,10,.92); backdrop-filter: blur(8px); z-index: 10; border-bottom: 1px solid #222; }
+  nav { display: flex; gap: 1.4rem; align-items: center; padding: 1rem 2rem; max-width: 1100px; margin: 0 auto; flex-wrap: wrap; }
+  nav .logo { font-weight: bold; letter-spacing: .1em; font-size: 1.05rem; cursor: pointer; }
+  nav a { color: #aaa; text-decoration: none; text-transform: uppercase; font-size: .76rem; letter-spacing: .14em; cursor: pointer; }
+  nav a:hover, nav a.active { color: #fff; }
+  main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem 4rem; min-height: 60vh; }
+  h1 { font-size: 2.2rem; font-weight: normal; letter-spacing: .04em; margin-bottom: .3rem; }
+  h2 { font-weight: normal; margin-top: 2.5rem; }
+  .tagline { color: #999; font-style: italic; margin-top: .2rem; margin-bottom: 2rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 14px; }
+  .card { background: #141414; border: 1px solid #262626; border-radius: 6px; padding: 1.3rem; cursor: pointer; transition: border-color .2s, transform .2s; }
+  .card:hover { border-color: #555; transform: translateY(-2px); }
+  .card h3 { margin: 0 0 .3rem; font-weight: normal; font-size: 1.05rem; }
+  .card p { margin: 0; color: #888; font-size: .85rem; font-family: system-ui, sans-serif; }
+  .ph { position: relative; aspect-ratio: 4/5; border-radius: 4px; overflow: hidden; cursor: zoom-in; filter: grayscale(100%) contrast(1.05); transition: transform .25s; -webkit-user-drag: none; user-select: none; -webkit-touch-callout: none; }
+  .ph:hover { transform: scale(1.02); }
+  .ph svg, .ph img { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .cap { position: absolute; bottom: 0; left: 0; right: 0; padding: .6rem .8rem; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; background: linear-gradient(transparent, rgba(0,0,0,.85)); font-family: system-ui, sans-serif; }
+  .back { display: inline-block; margin-bottom: 1.2rem; color: #999; cursor: pointer; font-size: .85rem; letter-spacing: .1em; }
+  .back:hover { color: #fff; }
+  .note { margin-top: 2.5rem; padding: .9rem 1.1rem; background: #191919; border-left: 3px solid #777; font-size: .82rem; color: #999; font-family: system-ui, sans-serif; }
+  blockquote { border-left: 3px solid #555; margin: 1.5rem 0; padding-left: 1.2rem; color: #bbb; font-style: italic; }
+  .prose { color: #aaa; line-height: 1.7; font-family: system-ui, sans-serif; }
+  form { max-width: 560px; display: grid; gap: 12px; margin-top: 1rem; font-family: system-ui, sans-serif; }
+  input, textarea { background: #141414; border: 1px solid #333; border-radius: 4px; padding: .8rem 1rem; color: #eee; font-size: .95rem; }
+  textarea { resize: vertical; }
+  button { background: #eaeaea; color: #0a0a0a; border: none; border-radius: 4px; padding: .8rem; font-size: .9rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; justify-self: start; }
+  footer { border-top: 1px solid #222; margin-top: 3rem; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; padding: 1.6rem 2rem; display: flex; gap: 1.6rem; align-items: center; flex-wrap: wrap; font-family: system-ui, sans-serif; }
+  .footer-inner a { color: #777; text-decoration: none; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; }
+  .footer-inner a:hover { color: #fff; }
+  .footer-inner .sep { color: #444; }
+  .footer-inner .copy { color: #666; font-size: .72rem; letter-spacing: .14em; }
+  .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.95); display: none; align-items: center; justify-content: center; z-index: 50; cursor: zoom-out; }
+  .lightbox.open { display: flex; }
+  .lightbox img, .lightbox svg { max-width: 94vw; max-height: 92vh; border-radius: 6px; width: auto; height: auto; }
+  .fade-in { animation: fadeUp .5s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 640px) {
+    nav { gap: .9rem; padding: .9rem 1.2rem; }
+    main { padding: 1.6rem 1.2rem 3rem; }
+    h1 { font-size: 1.7rem; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <nav>
+    <span class="logo" onclick="render('accueil')">STÉPHAN MONDAIN</span>
+    <a data-page="accueil" class="active">Accueil</a>
+    <a data-page="portraits">Portraits</a>
+    <a data-page="modeles">Modèles</a>
+    <a data-page="paysages">Paysages</a>
+    <a data-page="autres">Autres</a>
+    <a data-page="avis">Avis</a>
+    <a data-page="communication">Communication</a>
+    <a data-page="contact">Contact</a>
+  </nav>
+</header>
+<main id="app"></main>
+<footer>
+  <div class="footer-inner">
+    <a onclick="render('mentions')">Mentions légales</a>
+    <span class="sep">·</span>
+    <a href="https://www.instagram.com/smondain" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.45rem">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#777" stroke="none"/></svg>
+      Instagram</a>
+    <span class="sep">·</span>
+    <span class="copy">© Stéphan Mondain</span>
+  </div>
+</footer>
+<div class="lightbox" id="lightbox"></div>
+
+<script>
+// ================== DONNÉES DU SITE ==================
+// Galeries Portraits (Drive — 28 livrées, 693 photos ; les 29 manquantes s'ajouteront)
+const portraits = [["Aurore",13],["Blaine",33],["Camille",14],["Cassandra",22],["Charline",36],["Dorothee",19],["Emmanuelle",12],["Eugenie",33],["Henri",6],["Herminie",36],["Ilynca",22],["Jade",50],["Jean Charles",17],["Juliette",25],["Justine",22],["Kareen",10],["Lila",22],["Lisa",50],["Lise",18],["Maeva",20],["Margot",31],["Marie",50],["Marie Laurence",12],["Michele",19],["Paola",10],["Pauline",49],["Richard",15],["Tina",27]];
+const portraitsAVenir = ["Agnès","Alycia","Anais","Andrea","Andreia","Anne","Hadjira","Jean","Jeanne","Jennyfer","Julie","Laurence","Lee","Léa","Maelle","Ophelia","Ophelie","Pascale","Ranim","Romane","Sabrina","Sophie","Stephan","Sylvie","Valentin","Virginie"];
+const modeles = ["Andrea","Aurelia","Aurore","Cecile","Clara","Clementine","Elena","Eugenie","Giulia","Ielena","Jennyfer","Laurie","Lee","Lisa","Lou","Maeva","Magalie","Margot","Marie","Meg","Ophelia","Ophelie","Pauline","Sabrina","Severine","Stella","ZeloZela","Zz Polas zZ"];
+const paysages = ["Zanzibar","SidiBouSaid","Corot","Djerba","Costa Rica","Bretagne","Plages","Paris","Nice"];
+const autres = ["Animaux","Bateaux","Batiments","Cavalieres","Ciel","Corps","Couples","Curiosites","Danseurs","De Rue","Exterieur","Fauves","Fleur","Mère Fille","Oiseaux","Projection","Verres"];
+
+// ================== MOTEUR D'AFFICHAGE ==================
+function ph(i, label) {
+  const s = (i * 37) % 100;
+  return '<div class="ph" data-lb="' + i + '">' +
+    '<svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">' +
+    '<defs><radialGradient id="g' + i + '" cx="35%" cy="30%">' +
+    '<stop offset="0%" stop-color="#4a4a4a"/><stop offset="60%" stop-color="#1a1a1a"/><stop offset="100%" stop-color="#050505"/></radialGradient></defs>' +
+    '<rect width="400" height="500" fill="url(#g' + i + ')"/>' +
+    '<circle cx="' + (s * 3 % 300 + 50) + '" cy="' + (s * 7 % 320 + 80) + '" r="' + (s % 50 + 45) + '" fill="#000" opacity="0.55"/>' +
+    '<path d="M0 430 Q 200 ' + (s % 80 + 380) + ' 400 440 L400 500 L0 500 Z" fill="#000" opacity="0.7"/></svg>' +
+    (label ? '<div class="cap">' + label + '</div>' : '') + '</div>';
+}
+function avisLink() {
+  return '<p style="margin-top:2rem;padding-top:1.2rem;border-top:1px solid #222"><a onclick="render(\'avis\')" style="color:#aaa;text-decoration:none;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem;cursor:pointer">Vos avis… →</a></p>';
+}
+function seriePage(titre, backTo) {
+  const n = titre.replace(/\s/g, '');
+  return '<a class="back" onclick="render(\'' + backTo + '\')">← Retour</a>' +
+    '<h1>' + titre + '</h1><p class="tagline">Série photographique</p>' +
+    '<div class="grid fade-in">' + [0,1,2,3,4,5,6,7].map(k => ph(n.length * 3 + k, '')).join('') + '</div>' +
+    avisLink();
+}
+
+const pages = {};
+pages.accueil = '<h1>Stéphan Mondain</h1><p class="tagline">« Des portraits, des modèles, qui racontent une histoire, une lumière, une âme. »</p>' +
+  '<div class="grid fade-in">' + [0,1,2,3,4,5,6,7,8,9,10,11].map(i => ph(i, '')).join('') + '</div>' +
+  '<div class="note">Site miroir en préparation — les vignettes seront remplacées par vos photographies lors de la mise en production.</div>' +
+  avisLink();
+
+pages.portraits = '<h1>Portraits</h1><p class="tagline">Cliquez sur le titre pour découvrir la galerie.</p><div class="cards fade-in">' +
+  portraits.map((p, i) => '<div class="card" onclick="render(\'por' + i + '\')"><h3>' + p[0] + '</h3><p>' + p[1] + ' photo' + (p[1] > 1 ? 's' : '') + '</p></div>').join('') + '</div>' +
+  (portraitsAVenir.length ? '<div class="note">Galeries en préparation : ' + portraitsAVenir.join(', ') + '</div>' : '');
+portraits.forEach((p, i) => { pages['por' + i] = seriePage(p[0], 'portraits'); });
+
+pages.modeles = '<h1>Modèles</h1>' +
+  '<p class="prose">Ici, les corps se dérobent et se révèlent, comme des secrets murmurés entre la nuit et le jour. Une épaule nue, un regard qui s\'attarde, et la lumière, complice, dessine des contours éphémères.</p>' +
+  '<p class="prose">Chaque image est un souffle suspendu, une danse où le temps se fait lent, où le noir et blanc épouse la peau et où l\'ombre caresse ce qu\'elle voile à peine.</p>' +
+  '<p class="prose" style="font-style:italic">« Entrez, observez, et laissez-vous emporter. »</p>' +
+  '<div class="cards fade-in">' +
+  modeles.map((m, i) => '<div class="card" onclick="render(\'mod' + i + '\')"><h3>' + m + '</h3><p>Galerie portrait</p></div>').join('') + '</div>';
+modeles.forEach((m, i) => { pages['mod' + i] = seriePage(m, 'modeles'); });
+
+pages.paysages = '<h1>Paysages</h1><p class="tagline">Cliquez sur le titre pour découvrir la galerie.</p><div class="cards fade-in">' +
+  paysages.map((p, i) => '<div class="card" onclick="render(\'voy' + i + '\')"><h3>' + p + '</h3><p>Galerie paysage</p></div>').join('') + '</div>';
+paysages.forEach((p, i) => { pages['voy' + i] = seriePage(p, 'paysages'); });
+
+pages.autres = '<h1>Autres</h1><p class="tagline">Cliquez sur le titre pour découvrir la galerie.</p><div class="cards fade-in">' +
+  autres.map((a, i) => '<div class="card" onclick="render(\'aut' + i + '\')"><h3>' + a + '</h3><p>Galerie thématique</p></div>').join('') + '</div>';
+autres.forEach((a, i) => { pages['aut' + i] = seriePage(a, 'autres'); });
+
+pages.avis = '<h1>Vos commentaires…</h1>' +
+  '<blockquote>« Sans la liberté de blâmer, il n\'est point d\'éloge flatteur. »<br/>— Beaumarchais</blockquote>' +
+  '<p class="prose">Vos retours, qu\'ils concernent mes œuvres ou nos séances, sont une source inépuisable d\'inspiration.<br/>' +
+  'Un mot sur une photo qui vous a touché·e ? Une suggestion pour améliorer une séance ? Une émotion, une critique, une idée ?<br/>' +
+  'Chaque avis, enthousiaste ou nuancé, m\'aide à affiner mon regard, à faire évoluer mon travail et à créer des images toujours plus proches de ce que je cherche à exprimer.</p>' +
+  '<p style="color:#888;font-style:italic">Merci à vous qui prenez le temps de partager votre expérience.</p>' +
+  '<h2>Laisser un avis</h2>' +
+  '<form action="#" onsubmit="return false"><input placeholder="Votre prénom"/><input placeholder="Votre email (non publié)"/><textarea placeholder="Votre avis…" rows="4"></textarea><button>Envoyer</button></form>' +
+  '<div class="note">Le formulaire sera branché gratuitement (Formspree) à la mise en production — chaque avis arrivera dans votre boîte mail.</div>' +
+  '<h2>Les avis publiés</h2><div class="note">Les avis que vous me transmettrez seront publiés ici.</div>';
+
+pages.communication = '<h1>Communication</h1><div class="cards fade-in">' +
+  '<div class="card" onclick="render(\'comcommentaires\')"><h3>Commentaires</h3><p>Vos retours sur mes œuvres et séances</p></div>' +
+  '<div class="card" onclick="render(\'comaccord\')"><h3>Accord</h3><p>Autorisation de publication</p></div>' +
+  '<div class="card" onclick="render(\'comtexte\')"><h3>Le texte</h3><p>Conditions d\'utilisation</p></div>' +
+  '<div class="card" onclick="render(\'contact\')"><h3>Contact</h3><p>Me contacter</p></div></div>';
+pages.comcommentaires = '<a class="back" onclick="render(\'communication\')">← Retour</a><h1>Commentaires</h1><p class="tagline">Vos retours, source d\'inspiration.</p><div class="note">Les commentaires déposés via la page Avis seront listés ici.</div>';
+pages.comaccord = '<a class="back" onclick="render(\'communication\')">← Retour</a><h1>Autorisation de publication</h1>' +
+  '<form action="#" onsubmit="return false"><input placeholder="Prénom"/><input placeholder="Nom de famille"/><input placeholder="Date de naissance" type="date"/><input placeholder="Votre @mail"/><input placeholder="Adresse"/><input placeholder="Téléphone"/><input placeholder="Modalités (si rémunération…)"/><input placeholder="Date de la séance" type="date"/><label style="color:#999;font-size:.85rem"><input type="checkbox" style="width:auto"/> J\'accepte que mes photos soient utilisées conformément aux termes de l\'accord de publication</label><button>Donner mon accord</button></form>' +
+  '<div class="note">Formulaire branché à la mise en production — l\'accord signé arrivera dans votre boîte mail.</div>';
+pages.comtexte = '<a class="back" onclick="render(\'communication\')">← Retour</a><h1>Le texte</h1><p class="tagline">Conditions d\'utilisation des photos.</p><div class="note">Le texte de l\'accord de publication sera repris ici (à me transmettre).</div>';
+
+pages.contact = '<h1>Contact</h1><p class="tagline">Me contacter…</p>' +
+  '<div class="card" style="cursor:default"><h3>Coordonnées</h3><p>Stéphan Mondain<br/>8 rue de la Ronce, 92410 Ville d\'Avray, France<br/>+33 6 08 68 91 03<br/>stephan.mondain@yahoo.fr</p></div>' +
+  '<form action="#" onsubmit="return false" style="margin-top:1.5rem"><input placeholder="Votre nom"/><input placeholder="Votre email"/><textarea placeholder="Votre message…" rows="4"></textarea><button>Envoyer</button></form>' +
+  '<div class="note">Formulaire branché à la mise en production (Formspree).</div>';
+
+pages.mentions = '<h1>Mentions légales</h1>' +
+  '<p class="prose"><strong>Éditeur du site :</strong> Stéphan Mondain — 8 rue de la Ronce, 92410 Ville d\'Avray, France<br/>' +
+  'Téléphone : +33 6 08 68 91 03 — Email : stephan.mondain@yahoo.fr</p>' +
+  '<p class="prose"><strong>Hébergement :</strong> Cloudflare Pages (Cloudflare, Inc.)</p>' +
+  '<p class="prose"><strong>Propriété intellectuelle :</strong> l\'ensemble des photographies présentées sur ce site est la propriété exclusive de Stéphan Mondain. Toute reproduction, diffusion ou utilisation sans autorisation écrite préalable est interdite.</p>' +
+  '<p class="prose"><strong>Données personnelles (RGPD) :</strong> les informations transmises via les formulaires (contact, avis, accord) servent uniquement à traiter votre demande et ne sont jamais cédées à des tiers. Vous disposez d\'un droit d\'accès, de rectification et de suppression en écrivant à stephan.mondain@yahoo.fr.</p>';
+
+// ================== NAVIGATION ==================
+function render(name) {
+  document.getElementById('app').innerHTML = pages[name] || pages.accueil;
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.dataset.page === name));
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('nav a').forEach(a => a.addEventListener('click', () => render(a.dataset.page)));
+
+// ================== LIGHTBOX + PROTECTIONS ==================
+const lb = document.getElementById('lightbox');
+lb.addEventListener('click', () => lb.classList.remove('open'));
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') lb.classList.remove('open');
+  if (lb.classList.contains('open') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+    const cur = lb.querySelector('svg, img'); if (cur) lb.innerHTML = cur.outerHTML;
+  }
+});
+document.addEventListener('click', e => {
+  const p = e.target.closest('.ph'); if (!p) return;
+  lb.innerHTML = p.querySelector('svg, img').outerHTML;
+  lb.classList.add('open');
+});
+document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG' || e.target.closest('.ph')) e.preventDefault(); });
+document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG') e.preventDefault(); });
+
+render('accueil');
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" nonce="x1vlj7QS6c0h4QIARH1V9w==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
