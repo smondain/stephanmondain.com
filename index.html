@@ -24,9 +24,10 @@
   .card:hover { border-color: #555; transform: translateY(-2px); }
   .card h3 { margin: 0 0 .3rem; font-weight: normal; font-size: 1.05rem; }
   .card p { margin: 0; color: #888; font-size: .85rem; font-family: system-ui, sans-serif; }
-  .ph { position: relative; aspect-ratio: 4/5; border-radius: 4px; overflow: hidden; cursor: zoom-in; filter: grayscale(100%) contrast(1.05); transition: transform .25s; -webkit-user-drag: none; user-select: none; -webkit-touch-callout: none; }
-  .ph:hover { transform: scale(1.02); }
-  .ph svg, .ph img { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .ph { position: relative; aspect-ratio: 4/5; border-radius: 4px; overflow: hidden; cursor: zoom-in; background: #141414; -webkit-user-drag: none; user-select: none; -webkit-touch-callout: none; }
+  .ph img, .ph svg { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .ph img { filter: grayscale(100%) contrast(1.05); transition: transform .25s; }
+  .ph:hover img { transform: scale(1.02); }
   .cap { position: absolute; bottom: 0; left: 0; right: 0; padding: .6rem .8rem; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; background: linear-gradient(transparent, rgba(0,0,0,.85)); font-family: system-ui, sans-serif; }
   .back { display: inline-block; margin-bottom: 1.2rem; color: #999; cursor: pointer; font-size: .85rem; letter-spacing: .1em; }
   .back:hover { color: #fff; }
@@ -43,9 +44,13 @@
   .footer-inner a:hover { color: #fff; }
   .footer-inner .sep { color: #444; }
   .footer-inner .copy { color: #666; font-size: .72rem; letter-spacing: .14em; }
-  .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.95); display: none; align-items: center; justify-content: center; z-index: 50; cursor: zoom-out; }
+  .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.96); display: none; align-items: center; justify-content: center; z-index: 50; cursor: zoom-out; }
   .lightbox.open { display: flex; }
-  .lightbox img, .lightbox svg { max-width: 94vw; max-height: 92vh; border-radius: 6px; width: auto; height: auto; }
+  .lightbox img { max-width: 94vw; max-height: 92vh; border-radius: 6px; width: auto; height: auto; filter: none; }
+  .lb-nav { position: fixed; top: 50%; transform: translateY(-50%); font-size: 2rem; color: #888; cursor: pointer; user-select: none; padding: 1rem; }
+  .lb-nav:hover { color: #fff; }
+  .lb-prev { left: 0; } .lb-next { right: 0; }
+  .lb-count { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); color: #888; font-size: .8rem; font-family: system-ui, sans-serif; letter-spacing: .1em; }
   .fade-in { animation: fadeUp .5s ease both; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
   @media (max-width: 640px) {
@@ -82,49 +87,57 @@
   </div>
 </footer>
 <div class="lightbox" id="lightbox"></div>
-
+<script src="photos.js"></script>
 <script>
-// ================== DONNÉES DU SITE ==================
-// Galeries Portraits (Drive — 28 livrées, 693 photos ; les 29 manquantes s'ajouteront)
-const portraits = [["Aurore",13],["Blaine",33],["Camille",14],["Cassandra",22],["Charline",36],["Dorothee",19],["Emmanuelle",12],["Eugenie",33],["Henri",6],["Herminie",36],["Ilynca",22],["Jade",50],["Jean Charles",17],["Juliette",25],["Justine",22],["Kareen",10],["Lila",22],["Lisa",50],["Lise",18],["Maeva",20],["Margot",31],["Marie",50],["Marie Laurence",12],["Michele",19],["Paola",10],["Pauline",49],["Richard",15],["Tina",27]];
+// ================== DONNÉES ==================
+const portraitNames = [["Aurore","aurore"],["Blaine","blaine"],["Camille","camille"],["Cassandra","cassandra"],["Charline","charline"],["Dorothee","dorothee"],["Emmanuelle","emmanuelle"],["Eugenie","eugenie"],["Henri","henri"],["Herminie","herminie"],["Ilynca","ilynca"],["Jade","jade"],["Jean Charles","jean-charles"],["Juliette","juliette"],["Justine","justine"],["Kareen","kareen"],["Lila","lila"],["Lisa","lisa"],["Lise","lise"],["Maeva","maeva"],["Margot","margot"],["Marie","marie"],["Marie Laurence","marie-laurence"],["Michele","michele"],["Paola","paola"],["Pauline","pauline"],["Richard","richard"],["Tina","tina"]];
+const portraits = portraitNames.map(p => [p[0], (PHOTOS[p[1]] || []).length]);
 const portraitsAVenir = ["Agnès","Alycia","Anais","Andrea","Andreia","Anne","Hadjira","Jean","Jeanne","Jennyfer","Julie","Laurence","Lee","Léa","Maelle","Ophelia","Ophelie","Pascale","Ranim","Romane","Sabrina","Sophie","Stephan","Sylvie","Valentin","Virginie"];
 const modeles = ["Andrea","Aurelia","Aurore","Cecile","Clara","Clementine","Elena","Eugenie","Giulia","Ielena","Jennyfer","Laurie","Lee","Lisa","Lou","Maeva","Magalie","Margot","Marie","Meg","Ophelia","Ophelie","Pauline","Sabrina","Severine","Stella","ZeloZela","Zz Polas zZ"];
 const paysages = ["Zanzibar","SidiBouSaid","Corot","Djerba","Costa Rica","Bretagne","Plages","Paris","Nice"];
 const autres = ["Animaux","Bateaux","Batiments","Cavalieres","Ciel","Corps","Couples","Curiosites","Danseurs","De Rue","Exterieur","Fauves","Fleur","Mère Fille","Oiseaux","Projection","Verres"];
 
-// ================== MOTEUR D'AFFICHAGE ==================
-function ph(i, label) {
+// ================== MOTEUR ==================
+function ph(i) {
   const s = (i * 37) % 100;
-  return '<div class="ph" data-lb="' + i + '">' +
+  return '<div class="ph">' +
     '<svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice">' +
     '<defs><radialGradient id="g' + i + '" cx="35%" cy="30%">' +
     '<stop offset="0%" stop-color="#4a4a4a"/><stop offset="60%" stop-color="#1a1a1a"/><stop offset="100%" stop-color="#050505"/></radialGradient></defs>' +
     '<rect width="400" height="500" fill="url(#g' + i + ')"/>' +
     '<circle cx="' + (s * 3 % 300 + 50) + '" cy="' + (s * 7 % 320 + 80) + '" r="' + (s % 50 + 45) + '" fill="#000" opacity="0.55"/>' +
-    '<path d="M0 430 Q 200 ' + (s % 80 + 380) + ' 400 440 L400 500 L0 500 Z" fill="#000" opacity="0.7"/></svg>' +
-    (label ? '<div class="cap">' + label + '</div>' : '') + '</div>';
+    '<path d="M0 430 Q 200 ' + (s % 80 + 380) + ' 400 440 L400 500 L0 500 Z" fill="#000" opacity="0.7"/></svg></div>';
 }
 function avisLink() {
   return '<p style="margin-top:2rem;padding-top:1.2rem;border-top:1px solid #222"><a onclick="render(\'avis\')" style="color:#aaa;text-decoration:none;letter-spacing:.12em;text-transform:uppercase;font-size:.78rem;cursor:pointer">Vos avis… →</a></p>';
 }
+// Page galerie avec vraies photos (chargées depuis images/portraits/<slug>/)
+function photoPage(titre, slug, backTo) {
+  const files = PHOTOS[slug] || [];
+  return '<a class="back" onclick="render(\'' + backTo + '\')">← Retour</a>' +
+    '<h1>' + titre + '</h1><p class="tagline">' + files.length + ' photo' + (files.length > 1 ? 's' : '') + '</p>' +
+    '<div class="grid fade-in">' + files.map((f, k) =>
+      '<div class="ph"><img src="images/portraits/' + slug + '/' + encodeURIComponent(f) + '" alt="' + titre + '" loading="lazy" data-idx="' + k + '"/></div>'
+    ).join('') + '</div>' + avisLink();
+}
 function seriePage(titre, backTo) {
-  const n = titre.replace(/\s/g, '');
+  const n = titre.replace(/\s/g, '').length;
   return '<a class="back" onclick="render(\'' + backTo + '\')">← Retour</a>' +
     '<h1>' + titre + '</h1><p class="tagline">Série photographique</p>' +
-    '<div class="grid fade-in">' + [0,1,2,3,4,5,6,7].map(k => ph(n.length * 3 + k, '')).join('') + '</div>' +
+    '<div class="grid fade-in">' + [0,1,2,3,4,5,6,7].map(k => ph(n * 3 + k)).join('') + '</div>' +
     avisLink();
 }
 
 const pages = {};
 pages.accueil = '<h1>Stéphan Mondain</h1><p class="tagline">« Des portraits, des modèles, qui racontent une histoire, une lumière, une âme. »</p>' +
-  '<div class="grid fade-in">' + [0,1,2,3,4,5,6,7,8,9,10,11].map(i => ph(i, '')).join('') + '</div>' +
+  '<div class="grid fade-in">' + [0,1,2,3,4,5,6,7,8,9,10,11].map(i => ph(i)).join('') + '</div>' +
   '<div class="note">Site miroir en préparation — les vignettes seront remplacées par vos photographies lors de la mise en production.</div>' +
   avisLink();
 
 pages.portraits = '<h1>Portraits</h1><p class="tagline">Cliquez sur le titre pour découvrir la galerie.</p><div class="cards fade-in">' +
   portraits.map((p, i) => '<div class="card" onclick="render(\'por' + i + '\')"><h3>' + p[0] + '</h3><p>' + p[1] + ' photo' + (p[1] > 1 ? 's' : '') + '</p></div>').join('') + '</div>' +
   (portraitsAVenir.length ? '<div class="note">Galeries en préparation : ' + portraitsAVenir.join(', ') + '</div>' : '');
-portraits.forEach((p, i) => { pages['por' + i] = seriePage(p[0], 'portraits'); });
+portraitNames.forEach((p, i) => { pages['por' + i] = photoPage(p[0], p[1], 'portraits'); });
 
 pages.modeles = '<h1>Modèles</h1>' +
   '<p class="prose">Ici, les corps se dérobent et se révèlent, comme des secrets murmurés entre la nuit et le jour. Une épaule nue, un regard qui s\'attarde, et la lumière, complice, dessine des contours éphémères.</p>' +
@@ -172,7 +185,7 @@ pages.contact = '<h1>Contact</h1><p class="tagline">Me contacter…</p>' +
 pages.mentions = '<h1>Mentions légales</h1>' +
   '<p class="prose"><strong>Éditeur du site :</strong> Stéphan Mondain — 8 rue de la Ronce, 92410 Ville d\'Avray, France<br/>' +
   'Téléphone : +33 6 08 68 91 03 — Email : stephan.mondain@yahoo.fr</p>' +
-  '<p class="prose"><strong>Hébergement :</strong> Cloudflare Pages (Cloudflare, Inc.)</p>' +
+  '<p class="prose"><strong>Hébergement :</strong> Cloudflare</p>' +
   '<p class="prose"><strong>Propriété intellectuelle :</strong> l\'ensemble des photographies présentées sur ce site est la propriété exclusive de Stéphan Mondain. Toute reproduction, diffusion ou utilisation sans autorisation écrite préalable est interdite.</p>' +
   '<p class="prose"><strong>Données personnelles (RGPD) :</strong> les informations transmises via les formulaires (contact, avis, accord) servent uniquement à traiter votre demande et ne sont jamais cédées à des tiers. Vous disposez d\'un droit d\'accès, de rectification et de suppression en écrivant à stephan.mondain@yahoo.fr.</p>';
 
@@ -186,16 +199,32 @@ document.querySelectorAll('nav a').forEach(a => a.addEventListener('click', () =
 
 // ================== LIGHTBOX + PROTECTIONS ==================
 const lb = document.getElementById('lightbox');
+let lbList = [], lbIdx = 0;
+function showLb(i) {
+  lbIdx = i;
+  lb.innerHTML = '<img src="' + lbList[i] + '" alt=""/>' +
+    '<span class="lb-nav lb-prev" id="lbp">‹</span><span class="lb-nav lb-next" id="lbn">›</span>' +
+    '<span class="lb-count">' + (i + 1) + ' / ' + lbList.length + '</span>';
+  document.getElementById('lbp').onclick = e => { e.stopPropagation(); showLb((lbIdx - 1 + lbList.length) % lbList.length); };
+  document.getElementById('lbn').onclick = e => { e.stopPropagation(); showLb((lbIdx + 1) % lbList.length); };
+}
 lb.addEventListener('click', () => lb.classList.remove('open'));
 document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
   if (e.key === 'Escape') lb.classList.remove('open');
-  if (lb.classList.contains('open') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
-    const cur = lb.querySelector('svg, img'); if (cur) lb.innerHTML = cur.outerHTML;
-  }
+  if (e.key === 'ArrowLeft') showLb((lbIdx - 1 + lbList.length) % lbList.length);
+  if (e.key === 'ArrowRight') showLb((lbIdx + 1) % lbList.length);
 });
 document.addEventListener('click', e => {
   const p = e.target.closest('.ph'); if (!p) return;
-  lb.innerHTML = p.querySelector('svg, img').outerHTML;
+  const img = p.querySelector('img[data-idx]');
+  if (img) {
+    lbList = Array.from(document.querySelectorAll('.grid img')).map(x => x.src);
+    showLb(lbList.indexOf(img.src));
+  } else {
+    lbList = [p.querySelector('svg') ? '' : ''];
+    lb.innerHTML = p.innerHTML; lb.classList.add('open');
+  }
   lb.classList.add('open');
 });
 document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG' || e.target.closest('.ph')) e.preventDefault(); });
@@ -203,6 +232,6 @@ document.addEventListener('dragstart', e => { if (e.target.tagName === 'IMG') e.
 
 render('accueil');
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" nonce="x1vlj7QS6c0h4QIARH1V9w==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" nonce="q4mpoUdNRZkFZBrMIKwHlg==" data-cf-beacon='{"version":"2024.11.0","token":"36b4216ae2dc4d5488c249161e71fe1e","spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
